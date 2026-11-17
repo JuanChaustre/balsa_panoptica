@@ -1,0 +1,34 @@
+{
+  "categories": [
+    {
+      "id": 1,
+      "name": "balsa_piece",
+      "display_name": "Pieza de balsa",
+      "isthing": true
+    },
+    {
+      "id": 2,
+      "name": "hand_arm",
+      "display_name": "Mano/brazo",
+      "isthing": true
+    },
+    {
+      "id": 3,
+      "name": "work_surface",
+      "display_name": "Superficie de trabajo",
+      "isthing": false
+    },
+    {
+      "id": 4,
+      "name": "background",
+      "display_name": "Fondo/entorno",
+      "isthing": false
+    }
+  ],
+  "notes": [
+    "Cada pieza de balsa debe tener un ID de instancia distinto.",
+    "Manos y brazos son una categoría thing separada.",
+    "Mesa/superficie y el resto del entorno son categorías stuff.",
+    "Las propuestas automáticas requieren revisión humana."
+  ]
+}

@@ -1,0 +1,31 @@
+# Entorno y archivos temporales de Python
+.venv/
+.venv-*/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Configuración local y secretos
+.env
+.env.*
+!.env.example
+
+# Imágenes y datos de usuario/anotación
+/images/
+/data/
+
+# Checkpoints, estados del optimizador y ejecuciones de entrenamiento
+/training/runs/
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+
+# Informes generados y paquetes de entrega
+/entregables/
+*.zip
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
