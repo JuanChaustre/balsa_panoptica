@@ -2,8 +2,8 @@
 
 Proyecto para pre-etiquetar localmente las fotos, corregir las anotaciones,
 entrenar un modelo panóptico y compararlo con el Mask2Former del Taller 3.
-Las imágenes originales permanecen en `../images`; ningún archivo se sube a
-un servicio externo.
+Las imágenes originales y los datos de anotación se mantienen locales; el
+checkpoint entrenado para la aplicación en vivo se distribuye por Git LFS.
 
 ## Dataset y clases
 
@@ -21,24 +21,78 @@ Las clases iniciales están en `annotation_config.json`:
 | Superficie de trabajo (`work_surface`) | Stuff | Mesa/superficie donde se coloca la balsa |
 | Fondo/entorno (`background`) | Stuff | Resto de la escena |
 
-## Preparar el entorno
+## Descargar el proyecto y sus pesos
 
-Clona o ubica esta carpeta con el nombre `balsa_panoptica` dentro de un
-directorio de trabajo. Desde el directorio que contiene esa carpeta, crea un
-entorno e instala las dependencias:
+Instala Git LFS antes de clonar para descargar también el checkpoint de unos
+182 MB. En Ubuntu/Debian:
 
 ```bash
-python3 -m venv .venv-balsa
+sudo apt update
+sudo apt install git-lfs
+git lfs install
+```
+
+En Windows, instala Git LFS y ejecuta `git lfs install` desde Git Bash o
+PowerShell. Luego clona el repositorio y descarga los objetos LFS:
+
+```bash
+git clone https://github.com/JuanChaustre/balsa_panoptica.git
+cd balsa_panoptica
+git lfs pull
+cd ..
+```
+
+Si ya clonaste el repositorio sin Git LFS, desde su carpeta ejecuta:
+
+```bash
+git lfs install
+git lfs pull
+```
+
+El checkpoint y los archivos de configuración requeridos están en
+`training/runs/mask2former_balsa_20261117_145746/best_model/`. Comprueba que
+`model.safetensors` mida aproximadamente 182 MB; si tiene solo unos bytes,
+ejecuta `git lfs pull` después de instalar Git LFS.
+
+## Preparar el entorno de Python
+
+En Ubuntu/Debian instala el soporte `venv` de la misma versión que Python. En
+este equipo, que usa Python 3.10:
+
+```bash
+sudo apt update
+sudo apt install python3.10-venv
+```
+
+Si usas otra versión, instala su paquete correspondiente (por ejemplo,
+`python3.12-venv`). Esto evita el error `ensurepip is not available` al crear
+el entorno.
+
+Desde el directorio que contiene la carpeta clonada `balsa_panoptica`, crea y
+activa el entorno e instala las dependencias:
+
+```bash
+python3 -m venv --clear .venv-balsa
 source .venv-balsa/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r balsa_panoptica/requirements.txt
 ```
 
-En Windows PowerShell, usa `py -m venv .venv-balsa`,
-`.\.venv-balsa\Scripts\Activate.ps1` y después el mismo comando `pip install`.
+`--clear` permite rehacer la carpeta parcial que puede dejar un intento fallido
+de creación. Para salir del entorno usa `deactivate`. Si ya creaste el entorno,
+basta con activarlo con `source .venv-balsa/bin/activate`.
+
+En Windows PowerShell, desde la carpeta que contiene `balsa_panoptica`:
+
+```powershell
+py -m venv .venv-balsa
+.\.venv-balsa\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r balsa_panoptica/requirements.txt
+```
+
 Para aprovechar CUDA, instala una versión de PyTorch compatible con la GPU y
-CUDA del equipo. Las fotos y anotaciones se mantienen localmente y no vienen en
-el repositorio fuente.
+CUDA del equipo.
 
 ## Aplicación para revisar y corregir
 
@@ -84,11 +138,10 @@ La aplicación detecta automáticamente el run más reciente que tenga
 cámara si ese checkpoint está disponible. Debe contener, como mínimo,
 `model.safetensors`, `config.json` y `preprocessor_config.json`.
 
-Los pesos ocupan aproximadamente 182 MB y se excluyen del repositorio Git junto
-con los demás runs. Después de clonar el código, copia el directorio
-`best_model/` del run entrenado a la ruta anterior mediante un canal de
-transferencia autorizado. Si falta, la aplicación mostrará que no encontró un
-checkpoint.
+El checkpoint está incluido en el repositorio mediante Git LFS. No hace falta
+volver a entrenar ni copiarlo por separado cuando `git lfs pull` termina
+correctamente. Si el checkpoint falta, verifica la instalación de Git LFS y
+ejecuta ese comando desde la carpeta del repositorio.
 
 Resultados del checkpoint actual en el test de 17 imágenes: IoU macro **71.56%**,
 mAP **53.30%**, F1 macro **82.13%** y precisión macro **82.20%**. Cumple los
